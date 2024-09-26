@@ -4,14 +4,15 @@ import 'package:task_management/constants/app_colors.dart';
 class AppTheme {
   static ThemeData getTheme(BuildContext context) {
     return ThemeData(
-      colorSchemeSeed: AppColors.themeColor,
+      colorSchemeSeed: AppColors.colorGreen,
+      fontFamily: "poppins",
       textTheme: TextTheme(
-        displaySmall: _displaySmallTextStyle(),
-      ),
+          displaySmall: _displaySmallTextStyle(),
+          titleSmall: _titleSmallTextStyle()),
       inputDecorationTheme: _inputDecorationTheme(),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.themeColor,
+          backgroundColor: AppColors.colorGreen,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           fixedSize: const Size.fromWidth(double.maxFinite),
@@ -25,6 +26,7 @@ class AppTheme {
 
   static InputDecorationTheme _inputDecorationTheme() {
     return InputDecorationTheme(
+        contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
         fillColor: Colors.white,
         filled: true,
         hintStyle: const TextStyle(color: Colors.grey),
@@ -42,7 +44,14 @@ class AppTheme {
   static TextStyle _displaySmallTextStyle() {
     return const TextStyle(
       fontSize: 30,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w600,
     );
+  }
+
+  static TextStyle _titleSmallTextStyle() {
+    return const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: AppColors.colorLightGray);
   }
 }

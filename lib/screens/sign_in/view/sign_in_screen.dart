@@ -15,20 +15,19 @@ class SignInScreen extends StatelessWidget {
       child: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height,
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 120),
                 Text(
                   "Get Started With",
                   style: textTheme.displaySmall,
                 ),
                 const SizedBox(height: 24),
                 _buildSignInForm(),
-                const SizedBox(height: 50),
+                const SizedBox(height: 40),
                 Center(
                   child: Column(
                     children: [
@@ -39,7 +38,7 @@ class SignInScreen extends StatelessWidget {
                           style: TextStyle(color: Colors.grey),
                         ),
                       ),
-                      _buildSignUpSection(),
+                      _buildSignUpSection(context),
                     ],
                   ),
                 )
@@ -51,7 +50,7 @@ class SignInScreen extends StatelessWidget {
     );
   }
 
-  RichText _buildSignUpSection() {
+  RichText _buildSignUpSection(context) {
     return RichText(
       text: TextSpan(
         style: const TextStyle(
@@ -63,8 +62,9 @@ class SignInScreen extends StatelessWidget {
         children: [
           TextSpan(
               text: 'Sign Up',
-              style: const TextStyle(color: AppColors.themeColor),
-              recognizer: TapGestureRecognizer()..onTap = () => onTapSignUp),
+              style: const TextStyle(color: AppColors.colorGreen),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () => onTapSignUp(context)),
         ],
       ),
     );
