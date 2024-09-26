@@ -6,6 +6,9 @@ Map<String, WidgetBuilder> routesHandler() {
   return {
     Routes.splash: (context) => RoutesConfig.splashScreen,
     Routes.signIn: (context) => RoutesConfig.signInScreen,
-    Routes.signUp: (context) => RoutesConfig.signUpScreen
+    Routes.signUp: (context) => RoutesConfig.signUpScreen,
+    Routes.emailAddress: (context) => RoutesConfig.emailAddressScreen,
+    Routes.pinVerification: (context) => RoutesConfig.pinVerificationScreen,
+    Routes.setPassword: (context) => RoutesConfig.setPasswordScreen,
   };
 }

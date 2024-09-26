@@ -5,6 +5,10 @@ void onTapNextButton() {
   // TODO: implement on tap next button
 }
 
+void onTapForgotPassword(context) {
+  Navigator.pushNamed(context, Routes.emailAddress);
+}
+
 void onTapSignUp(context) {
   Navigator.pushNamed(context, Routes.signUp);
 }

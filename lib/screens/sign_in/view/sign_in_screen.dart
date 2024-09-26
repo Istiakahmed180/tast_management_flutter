@@ -20,7 +20,7 @@ class SignInScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 120),
+                const SizedBox(height: 150),
                 Text(
                   "Get Started With",
                   style: textTheme.displaySmall,
@@ -32,7 +32,7 @@ class SignInScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () => onTapForgotPassword(context),
                         child: const Text(
                           'Forgot Password?',
                           style: TextStyle(color: Colors.grey),
