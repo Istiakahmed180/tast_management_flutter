@@ -10,15 +10,19 @@ class AppTheme {
           displaySmall: _displaySmallTextStyle(),
           titleSmall: _titleSmallTextStyle()),
       inputDecorationTheme: _inputDecorationTheme(),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.colorGreen,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          fixedSize: const Size.fromWidth(double.maxFinite),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+      elevatedButtonTheme: _elevatedButtonThemeData(),
+    );
+  }
+
+  static ElevatedButtonThemeData _elevatedButtonThemeData() {
+    return ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.colorGreen,
+        foregroundColor: AppColors.colorWhite,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        fixedSize: const Size.fromWidth(double.maxFinite),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     );

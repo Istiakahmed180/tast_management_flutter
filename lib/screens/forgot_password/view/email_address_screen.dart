@@ -31,7 +31,7 @@ class EmailAddressScreen extends StatelessWidget {
                   style: textTheme.titleSmall,
                 ),
                 const SizedBox(height: 24),
-                _buildEmailAddressForm(),
+                _buildEmailAddressForm(context),
                 const SizedBox(height: 40),
                 Center(
                   child: Column(
@@ -63,13 +63,13 @@ RichText _buildSignInSection(context) {
             text: 'Sign In',
             style: const TextStyle(color: AppColors.colorGreen),
             recognizer: TapGestureRecognizer()
-              ..onTap = () => onTapSignInAction(context)),
+              ..onTap = () => onTapEmailAddressSignInAction(context)),
       ],
     ),
   );
 }
 
-Form _buildEmailAddressForm() {
+Form _buildEmailAddressForm(context) {
   return Form(
     child: Column(
       children: [
@@ -79,7 +79,7 @@ Form _buildEmailAddressForm() {
         ),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: () => onTapEmailAddress(),
+          onPressed: () => onTapEmailAddressAction(context),
           child: const Icon(
             Icons.arrow_circle_right_outlined,
             size: 30,
