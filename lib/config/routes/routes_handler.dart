@@ -10,5 +10,6 @@ Map<String, WidgetBuilder> routesHandler() {
     Routes.emailAddress: (context) => RoutesConfig.emailAddressScreen,
     Routes.pinVerification: (context) => RoutesConfig.pinVerificationScreen,
     Routes.setPassword: (context) => RoutesConfig.setPasswordScreen,
+    Routes.home: (context) => RoutesConfig.homeScreen,
   };
 }

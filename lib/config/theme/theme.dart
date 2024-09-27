@@ -11,8 +11,33 @@ class AppTheme {
           titleSmall: _titleSmallTextStyle()),
       inputDecorationTheme: _inputDecorationTheme(),
       elevatedButtonTheme: _elevatedButtonThemeData(),
+      appBarTheme: _appBarTheme(),
+      navigationBarTheme: _navigationBarThemeData(),
     );
   }
+
+  static NavigationBarThemeData _navigationBarThemeData() {
+    return NavigationBarThemeData(
+      indicatorColor: AppColors.colorGreen,
+      labelTextStyle:
+          WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.selected)) {
+          return const TextStyle(
+              color: AppColors.colorGreen, fontWeight: FontWeight.bold);
+        }
+        return const TextStyle(color: AppColors.colorLightGray);
+      }),
+      iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+          (Set<WidgetState> states) {
+        if (states.contains(WidgetState.selected)) {
+          return const IconThemeData(color: Colors.white);
+        }
+        return const IconThemeData(color: AppColors.colorLightGray);
+      }),
+    );
+  }
+
+  static AppBarTheme _appBarTheme() => const AppBarTheme(toolbarHeight: 80);
 
   static ElevatedButtonThemeData _elevatedButtonThemeData() {
     return ElevatedButtonThemeData(

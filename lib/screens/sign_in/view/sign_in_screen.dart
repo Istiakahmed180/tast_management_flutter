@@ -26,7 +26,7 @@ class SignInScreen extends StatelessWidget {
                   style: textTheme.displaySmall,
                 ),
                 const SizedBox(height: 24),
-                _buildSignInForm(),
+                _buildSignInForm(context),
                 const SizedBox(height: 40),
                 Center(
                   child: Column(
@@ -70,7 +70,7 @@ class SignInScreen extends StatelessWidget {
     );
   }
 
-  Form _buildSignInForm() {
+  Form _buildSignInForm(context) {
     return Form(
       child: Column(
         children: [
@@ -85,7 +85,7 @@ class SignInScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => onTapNextButton,
+            onPressed: () => onTapNextButton(context),
             child: const Icon(
               Icons.arrow_circle_right_outlined,
               size: 30,

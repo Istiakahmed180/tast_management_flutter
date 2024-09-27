@@ -26,7 +26,7 @@ class SignUpScreen extends StatelessWidget {
                   style: textTheme.displaySmall,
                 ),
                 const SizedBox(height: 24),
-                _buildSignUpForm(),
+                _buildSignUpForm(context),
                 const SizedBox(height: 40),
                 Center(
                   child: Column(
@@ -64,7 +64,7 @@ RichText _buildSignInSection(context) {
   );
 }
 
-Form _buildSignUpForm() {
+Form _buildSignUpForm(context) {
   return Form(
     child: Column(
       children: [
@@ -94,7 +94,7 @@ Form _buildSignUpForm() {
         ),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: () => onTapNextButton,
+          onPressed: () => onTapNextButton(context),
           child: const Icon(
             Icons.arrow_circle_right_outlined,
             size: 30,

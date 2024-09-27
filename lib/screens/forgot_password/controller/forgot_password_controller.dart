@@ -38,7 +38,9 @@ void onTapPinVerificationSignInAction(context) {
 // -------------------------------------------------------------------------- //
 // Set Password Component Actions
 // -------------------------------------------------------------------------- //
-void onTapSetPasswordConfirmAction(context) {}
+void onTapSetPasswordConfirmAction(context) {
+  Navigator.pushNamed(context, Routes.signIn);
+}
 
 void onTapSetPasswordSignInAction(context) {
   Navigator.pushNamed(context, Routes.signIn);

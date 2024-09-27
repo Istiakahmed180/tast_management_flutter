@@ -5,4 +5,5 @@ class Routes {
   static const String emailAddress = "/email_address_screen";
   static const String pinVerification = "/pin_verification_screen";
   static const String setPassword = "/set_password_screen";
+  static const String home = "/home_screen";
 }
