@@ -1,11 +1,27 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_management/common/widgets/app_background.dart';
 import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/screens/sign_in/controller/sign_in_controller.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final formKey = GlobalKey<FormState>();
+  final SignInController signInController = Get.put(SignInController());
+
+  @override
+  void dispose() {
+    super.dispose();
+    signInController.emailController.dispose();
+    signInController.passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,38 +29,46 @@ class SignInScreen extends StatelessWidget {
 
     return AppBackground(
       child: SingleChildScrollView(
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 150),
-                Text(
-                  "Get Started With",
-                  style: textTheme.displaySmall,
-                ),
-                const SizedBox(height: 24),
-                _buildSignInForm(context),
-                const SizedBox(height: 40),
-                Center(
-                  child: Column(
-                    children: [
-                      TextButton(
-                        onPressed: () => onTapForgotPassword(context),
-                        child: const Text(
-                          'Forgot Password?',
-                          style: TextStyle(color: Colors.grey),
+        child: Obx(
+          () => signInController.isLoading.value
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: AppColors.colorGreen,
+                ))
+              : SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 150),
+                        Text(
+                          "Get Started With",
+                          style: textTheme.displaySmall,
                         ),
-                      ),
-                      _buildSignUpSection(context),
-                    ],
+                        const SizedBox(height: 24),
+                        _buildSignInForm(context),
+                        const SizedBox(height: 40),
+                        Center(
+                          child: Column(
+                            children: [
+                              TextButton(
+                                onPressed: () => signInController
+                                    .onTapForgotPasswordAction(context),
+                                child: const Text(
+                                  'Forgot Password?',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                              _buildSignUpSection(context),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                )
-              ],
-            ),
-          ),
+                ),
         ),
       ),
     );
@@ -64,7 +88,7 @@ class SignInScreen extends StatelessWidget {
               text: 'Sign Up',
               style: const TextStyle(color: AppColors.colorGreen),
               recognizer: TapGestureRecognizer()
-                ..onTap = () => onTapSignUp(context)),
+                ..onTap = () => signInController.onTapSignUpAction(context)),
         ],
       ),
     );
@@ -72,20 +96,37 @@ class SignInScreen extends StatelessWidget {
 
   Form _buildSignInForm(context) {
     return Form(
+      key: formKey,
       child: Column(
         children: [
           TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(hintText: "Email"),
-          ),
+              controller: signInController.emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(hintText: "Email"),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Please enter email address";
+                }
+                return null;
+              }),
           const SizedBox(height: 20),
           TextFormField(
-            obscureText: true,
-            decoration: const InputDecoration(hintText: "Password"),
-          ),
+              controller: signInController.passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(hintText: "Password"),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Please enter password";
+                }
+                return null;
+              }),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => onTapNextButton(context),
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                signInController.onTapSignInAction(context);
+              }
+            },
             child: const Icon(
               Icons.arrow_circle_right_outlined,
               size: 30,
