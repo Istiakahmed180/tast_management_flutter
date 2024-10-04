@@ -28,48 +28,46 @@ class _SignInScreenState extends State<SignInScreen> {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return AppBackground(
-      child: SingleChildScrollView(
-        child: Obx(
-          () => signInController.isLoading.value
-              ? const Center(
-                  child: CircularProgressIndicator(
-                  color: AppColors.colorGreen,
-                ))
-              : SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 150),
-                        Text(
-                          "Get Started With",
-                          style: textTheme.displaySmall,
-                        ),
-                        const SizedBox(height: 24),
-                        _buildSignInForm(context),
-                        const SizedBox(height: 40),
-                        Center(
-                          child: Column(
-                            children: [
-                              TextButton(
-                                onPressed: () => signInController
-                                    .onTapForgotPasswordAction(context),
-                                child: const Text(
-                                  'Forgot Password?',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
+      child: Obx(
+        () => signInController.isLoading.value
+            ? const Center(
+                child: CircularProgressIndicator(
+                color: AppColors.colorGreen,
+              ))
+            : SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 150),
+                      Text(
+                        "Get Started With",
+                        style: textTheme.displaySmall,
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSignInForm(context),
+                      const SizedBox(height: 40),
+                      Center(
+                        child: Column(
+                          children: [
+                            TextButton(
+                              onPressed: () => signInController
+                                  .onTapForgotPasswordAction(context),
+                              child: const Text(
+                                'Forgot Password?',
+                                style: TextStyle(color: Colors.grey),
                               ),
-                              _buildSignUpSection(context),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                            ),
+                            _buildSignUpSection(context),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ),
-        ),
+              ),
       ),
     );
   }
