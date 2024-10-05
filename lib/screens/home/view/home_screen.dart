@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/constants/assets_path.dart';
 import 'package:task_management/screens/canceled/view/canceled_screen.dart';
 import 'package:task_management/screens/completed/view/completed_screen.dart';
 import 'package:task_management/screens/new_task/view/new_task_screen.dart';
 import 'package:task_management/screens/progress/view/progress_screen.dart';
+import 'package:task_management/screens/sign_in/controller/sign_in_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final SignInController signInController = Get.put(SignInController());
   int currentIndex = 0;
 
   final pages = [
@@ -83,6 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundImage: AssetImage(AssetsPath.avater),
         ),
       ),
+      actions: [
+        IconButton(onPressed: () {}, icon: const Icon(Icons.logout_outlined))
+      ],
     );
   }
 }
