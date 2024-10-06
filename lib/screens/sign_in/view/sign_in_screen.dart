@@ -1,13 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 import 'package:task_management/common/widgets/app_background.dart';
-import 'package:task_management/config/routes/routes.dart';
-import 'package:task_management/constants/api_path.dart';
 import 'package:task_management/constants/app_colors.dart';
-import 'package:task_management/helpers/helper_snackbar.dart';
-import 'package:task_management/network/network_response.dart';
-import 'package:task_management/network/network_service.dart';
+import 'package:task_management/screens/sign_in/controller/sign_in_controller.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -17,10 +13,8 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  final SignInController signInController = Get.put(SignInController());
   final formKey = GlobalKey<FormState>();
-  bool isLoading = false;
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +82,7 @@ class _SignInScreenState extends State<SignInScreen> {
       child: Column(
         children: [
           TextFormField(
-              controller: emailController,
+              controller: signInController.emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(hintText: "Email"),
               validator: (value) {
@@ -99,7 +93,7 @@ class _SignInScreenState extends State<SignInScreen> {
               }),
           const SizedBox(height: 20),
           TextFormField(
-              controller: passwordController,
+              controller: signInController.passwordController,
               obscureText: true,
               decoration: const InputDecoration(hintText: "Password"),
               validator: (value) {
@@ -109,62 +103,23 @@ class _SignInScreenState extends State<SignInScreen> {
                 return null;
               }),
           const SizedBox(height: 20),
-          isLoading
-              ? const CircularProgressIndicator(
-                  backgroundColor: AppColors.colorGreen,
-                )
-              : ElevatedButton(
-                  onPressed: () => userSignIn(),
-                  child: const Icon(
-                    Icons.arrow_circle_right_outlined,
-                    size: 30,
-                  ),
+          Obx(
+            () => Visibility(
+              visible: !signInController.isProgress.value,
+              replacement: const CircularProgressIndicator(
+                backgroundColor: AppColors.colorGreen,
+              ),
+              child: ElevatedButton(
+                onPressed: () => signInController.signIn(),
+                child: const Icon(
+                  Icons.arrow_circle_right_outlined,
+                  size: 30,
                 ),
+              ),
+            ),
+          ),
         ],
       ),
     );
-  }
-
-  Future<void> userSignIn() async {
-    if (formKey.currentState!.validate()) {
-      setState(() {
-        isLoading = true;
-      });
-      final Map<String, dynamic> requestBody = {
-        "email": emailController.text,
-        "password": passwordController.text,
-      };
-
-      final NetworkResponse networkResponse = await NetworkService.postRequest(
-          url: ApiPath.login, requestBody: requestBody);
-
-      if (networkResponse.isSuccess) {
-        if (networkResponse.requestResponse["status"] == "success") {
-          final token = networkResponse.requestResponse["token"];
-          if (token != null) {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setString("token", token);
-            HelperSnackbar.showSnackBar(
-                context: context, message: "Login Success");
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              Routes.home,
-              (route) => false,
-            );
-            setState(() {
-              isLoading = false;
-            });
-          }
-        } else if (networkResponse.requestResponse["status"] == "fail") {
-          HelperSnackbar.showSnackBar(
-              context: context,
-              message: networkResponse.requestResponse["data"],
-              backgroundColor: AppColors.colorRed);
-          setState(() {
-            isLoading = false;
-          });
-        }
-      }
-    }
   }
 }
