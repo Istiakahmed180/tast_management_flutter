@@ -14,7 +14,7 @@ class NetworkService {
   // Get Token from SharedPreferences
   static Future<String?> _getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("user_token");
+    return prefs.getString("token");
   }
 
   // Create Headers
@@ -24,7 +24,8 @@ class NetworkService {
       'Accept': 'application/json',
     };
 
-    if (token != null && token.isNotEmpty) {
+    // Add Authorization header only if token is not null
+    if (token != null) {
       headers['Authorization'] = 'Bearer $token';
     }
 
@@ -36,7 +37,8 @@ class NetworkService {
     final String? token = await _getToken();
     try {
       Uri uri = Uri.parse(url);
-      final response = await get(uri, headers: _createHeaders(token!))
+      final response = await get(uri,
+              headers: _createHeaders(token)) // token handled as nullable
           .timeout(timeoutDuration);
       return _handleResponse(url, response, token);
     } catch (e) {
@@ -52,9 +54,13 @@ class NetworkService {
     final String? token = await _getToken();
     try {
       Uri uri = Uri.parse(url);
+
+      // Print the request body for debugging
+      debugPrint("Request Body: ${jsonEncode(requestBody)}");
+
       final response = await post(
         uri,
-        headers: _createHeaders(token!),
+        headers: _createHeaders(token), // token handled as nullable
         body: jsonEncode(requestBody),
       ).timeout(timeoutDuration);
       return _handleResponse(url, response, token);
@@ -65,7 +71,7 @@ class NetworkService {
 
   // Common function to handle API responses
   static NetworkResponse _handleResponse(
-      String url, Response response, String token) {
+      String url, Response response, String? token) {
     printResponse(url, response, token);
     if (response.statusCode >= 200 && response.statusCode < 300) {
       try {
@@ -103,7 +109,7 @@ class NetworkService {
   }
 
   // Logging the API responses for debugging
-  static void printResponse(String url, Response response, String token) {
+  static void printResponse(String url, Response response, String? token) {
     debugPrint(
         "URL : $url\nResponse Code : ${response.statusCode}\nToken : $token\nResponse Body : ${response.body}");
   }

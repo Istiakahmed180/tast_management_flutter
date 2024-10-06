@@ -1,9 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_management/common/widgets/app_background.dart';
+import 'package:task_management/config/routes/routes.dart';
+import 'package:task_management/constants/api_path.dart';
 import 'package:task_management/constants/app_colors.dart';
-import 'package:task_management/screens/sign_in/controller/sign_in_controller.dart';
+import 'package:task_management/helpers/helper_snackbar.dart';
+import 'package:task_management/network/network_response.dart';
+import 'package:task_management/network/network_service.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -14,60 +18,47 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final formKey = GlobalKey<FormState>();
-  final SignInController signInController = Get.put(SignInController());
-
-  @override
-  void dispose() {
-    super.dispose();
-    signInController.emailController.dispose();
-    signInController.passwordController.dispose();
-  }
+  bool isLoading = false;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return AppBackground(
-      child: Obx(
-        () => signInController.isLoading.value
-            ? const Center(
-                child: CircularProgressIndicator(
-                color: AppColors.colorGreen,
-              ))
-            : SizedBox(
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 150),
-                      Text(
-                        "Get Started With",
-                        style: textTheme.displaySmall,
-                      ),
-                      const SizedBox(height: 24),
-                      _buildSignInForm(context),
-                      const SizedBox(height: 40),
-                      Center(
-                        child: Column(
-                          children: [
-                            TextButton(
-                              onPressed: () => signInController
-                                  .onTapForgotPasswordAction(context),
-                              child: const Text(
-                                'Forgot Password?',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ),
-                            _buildSignUpSection(context),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 150),
+              Text(
+                "Get Started With",
+                style: textTheme.displaySmall,
               ),
+              const SizedBox(height: 24),
+              _buildSignInForm(context),
+              const SizedBox(height: 40),
+              Center(
+                child: Column(
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    _buildSignUpSection(context),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -85,8 +76,7 @@ class _SignInScreenState extends State<SignInScreen> {
           TextSpan(
               text: 'Sign Up',
               style: const TextStyle(color: AppColors.colorGreen),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => signInController.onTapSignUpAction(context)),
+              recognizer: TapGestureRecognizer()..onTap = () {}),
         ],
       ),
     );
@@ -98,7 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
       child: Column(
         children: [
           TextFormField(
-              controller: signInController.emailController,
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(hintText: "Email"),
               validator: (value) {
@@ -109,7 +99,7 @@ class _SignInScreenState extends State<SignInScreen> {
               }),
           const SizedBox(height: 20),
           TextFormField(
-              controller: signInController.passwordController,
+              controller: passwordController,
               obscureText: true,
               decoration: const InputDecoration(hintText: "Password"),
               validator: (value) {
@@ -119,19 +109,62 @@ class _SignInScreenState extends State<SignInScreen> {
                 return null;
               }),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                signInController.onTapSignInAction(context);
-              }
-            },
-            child: const Icon(
-              Icons.arrow_circle_right_outlined,
-              size: 30,
-            ),
-          ),
+          isLoading
+              ? const CircularProgressIndicator(
+                  backgroundColor: AppColors.colorGreen,
+                )
+              : ElevatedButton(
+                  onPressed: () => userSignIn(),
+                  child: const Icon(
+                    Icons.arrow_circle_right_outlined,
+                    size: 30,
+                  ),
+                ),
         ],
       ),
     );
+  }
+
+  Future<void> userSignIn() async {
+    if (formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      final Map<String, dynamic> requestBody = {
+        "email": emailController.text,
+        "password": passwordController.text,
+      };
+
+      final NetworkResponse networkResponse = await NetworkService.postRequest(
+          url: ApiPath.login, requestBody: requestBody);
+
+      if (networkResponse.isSuccess) {
+        if (networkResponse.requestResponse["status"] == "success") {
+          final token = networkResponse.requestResponse["token"];
+          if (token != null) {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString("token", token);
+            HelperSnackbar.showSnackBar(
+                context: context, message: "Login Success");
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.home,
+              (route) => false,
+            );
+            setState(() {
+              isLoading = false;
+            });
+          }
+        } else if (networkResponse.requestResponse["status"] == "fail") {
+          HelperSnackbar.showSnackBar(
+              context: context,
+              message: networkResponse.requestResponse["data"],
+              backgroundColor: AppColors.colorRed);
+          setState(() {
+            isLoading = false;
+          });
+        }
+      }
+    }
   }
 }
