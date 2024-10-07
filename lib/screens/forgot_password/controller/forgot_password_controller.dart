@@ -1,47 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:task_management/config/routes/routes.dart';
+import 'package:task_management/constants/api_path.dart';
 import 'package:task_management/constants/app_colors.dart';
-import 'package:task_management/helpers/helper_snackbar.dart';
+import 'package:task_management/network/network_response.dart';
+import 'package:task_management/network/network_service.dart';
 
 // -------------------------------------------------------------------------- //
-// Email Address Component Actions
+// Forgot Password Email Address Controller
 // -------------------------------------------------------------------------- //
-void onTapEmailAddressAction(context) {
-  Navigator.pushNamed(context, Routes.pinVerification);
-}
+class ForgotPasswordEmailAddressController extends GetxController {
+  final RxBool isProgress = false.obs;
+  final TextEditingController emailController = TextEditingController();
 
-void onTapEmailAddressSignInAction(context) {
-  Navigator.pushNamed(context, Routes.signIn);
-}
+  @override
+  onClose() {
+    super.onClose();
+    emailController.dispose();
+  }
 
-// -------------------------------------------------------------------------- //
-// Pin Verification Component Actions
-// -------------------------------------------------------------------------- //
-void onTapPinVerifyActionVerifyAction(
-    BuildContext context, GlobalKey<FormState> formKey, String currentText) {
-  if (formKey.currentState!.validate()) {
-    if (currentText.length == 6 && currentText == "123456") {
-      Navigator.pushNamed(context, Routes.setPassword);
+  // ------------------------------------------------------------------------ //
+  // Email Address Verification Function Start
+  Future<void> emailAddressVerification(
+      {required GlobalKey<FormState> formKey}) async {
+    if (formKey.currentState!.validate()) {
+      isProgress.value = true;
+      final url =
+          "${ApiPath.emailAddressVerify}/${emailController.text.trim()}";
+      final NetworkResponse response =
+          await NetworkService.getRequest(url: url);
+      isProgress.value = false;
+      if (response.isSuccess) {
+        if (response.requestResponse["status"] == "success") {
+          Get.toNamed(Routes.pinVerification);
+          Fluttertoast.showToast(
+              msg: response.requestResponse["data"],
+              backgroundColor: AppColors.colorGreen);
+        } else {
+          Fluttertoast.showToast(
+              msg: response.requestResponse["data"],
+              backgroundColor: AppColors.colorRed);
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: response.errorMessage, backgroundColor: AppColors.colorRed);
+      }
     } else {
-      HelperSnackbar.showSnackBar(
-          context: context,
-          message: "Invalid pin. Please try again.",
-          backgroundColor: AppColors.colorRed);
+      Fluttertoast.showToast(
+          msg: "Fill up all required fields",
+          backgroundColor: AppColors.colorOrange);
     }
   }
-}
+  // Email Address Verification Function End
+  // ------------------------------------------------------------------------ //
 
-void onTapPinVerificationSignInAction(context) {
-  Navigator.pushNamed(context, Routes.signIn);
+  // ------------------------------------------------------------------------ //
+  // Go To Sign In Function Start
+  void goToSignIn() {
+    Get.back();
+  }
+  // Email Address Verification Function End
+  // ------------------------------------------------------------------------ //
 }
 
 // -------------------------------------------------------------------------- //
-// Set Password Component Actions
+// Forgot Password Pin Verification Controller
 // -------------------------------------------------------------------------- //
-void onTapSetPasswordConfirmAction(context) {
-  Navigator.pushNamed(context, Routes.signIn);
-}
+class ForgotPasswordPinVerificationController extends GetxController {
+  final ForgotPasswordEmailAddressController
+      forgotPasswordEmailAddressController =
+      Get.put(ForgotPasswordEmailAddressController());
+  final isProgress = false.obs;
+  final RxString pinCode = "".obs;
+  final RxBool pinFilled = false.obs;
 
-void onTapSetPasswordSignInAction(context) {
-  Navigator.pushNamed(context, Routes.signIn);
+  // ------------------------------------------------------------------------ //
+  // Pin Verification Function Start
+  Future<void> pinVerification() async {
+    isProgress.value = true;
+    final url =
+        "${ApiPath.pinCodeVerify}/${forgotPasswordEmailAddressController.emailController.text}/$pinCode";
+    final NetworkResponse response = await NetworkService.getRequest(url: url);
+    isProgress.value = false;
+    if (response.isSuccess) {
+      if (response.requestResponse["status"] == "success") {
+        Get.offNamed(Routes.setPassword);
+        forgotPasswordEmailAddressController.emailController.clear();
+        Fluttertoast.showToast(
+            msg: response.requestResponse["data"],
+            backgroundColor: AppColors.colorGreen);
+      } else {
+        Fluttertoast.showToast(
+            msg: response.requestResponse["data"],
+            backgroundColor: AppColors.colorRed);
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: response.errorMessage, backgroundColor: AppColors.colorRed);
+    }
+  }
+  // Pin Verification Function End
+  // ------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------ //
+  // Gp Tp Sign In Function Start
+  void goToSignIn() {
+    Get.offNamed(Routes.signIn);
+  }
+  // Gp Tp Sign In Function End
+  // ------------------------------------------------------------------------ //
 }

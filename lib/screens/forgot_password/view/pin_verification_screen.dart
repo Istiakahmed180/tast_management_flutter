@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_management/common/widgets/app_background.dart';
 import 'package:task_management/constants/app_colors.dart';
@@ -15,23 +14,8 @@ class PinVerificationScreen extends StatefulWidget {
 }
 
 class _PinVerificationScreenState extends State<PinVerificationScreen> {
-  TextEditingController textEditingController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-  String currentText = "";
-  bool hasError = false;
-  StreamController<ErrorAnimationType>? errorController;
-
-  @override
-  void initState() {
-    errorController = StreamController<ErrorAnimationType>();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    errorController!.close();
-    super.dispose();
-  }
+  final ForgotPasswordPinVerificationController pinVerificationController =
+      Get.put(ForgotPasswordPinVerificationController());
 
   @override
   Widget build(BuildContext context) {
@@ -75,47 +59,44 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
   }
 
   Widget _buildPinCodeVerify() {
-    return Form(
-      key: formKey,
-      child: Column(
-        children: [
-          PinCodeTextField(
-            controller: textEditingController,
-            backgroundColor: Colors.transparent,
-            appContext: context,
-            length: 6,
-            cursorColor: AppColors.colorLightGray,
-            validator: (v) {
-              if (v!.length < 6) {
-                return "Please enter a valid 6 digit pin";
-              } else {
-                return null;
-              }
-            },
-            pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
-                borderRadius: BorderRadius.circular(8),
-                fieldHeight: 50,
-                fieldWidth: 40,
-                activeColor: AppColors.colorWhite,
-                inactiveColor: AppColors.colorGreen,
-                inactiveFillColor: AppColors.colorWhite),
-            keyboardType: TextInputType.number,
-            onChanged: (value) {
-              setState(() {
-                currentText = value;
-              });
-            },
-          ),
-          ElevatedButton(
-            onPressed: () =>
-                onTapPinVerifyActionVerifyAction(context, formKey, currentText),
-            child: const Text(
-              "Verify",
+    return Column(
+      children: [
+        PinCodeTextField(
+          backgroundColor: Colors.transparent,
+          appContext: context,
+          length: 6,
+          cursorColor: AppColors.colorLightGray,
+          pinTheme: PinTheme(
+              shape: PinCodeFieldShape.box,
+              borderRadius: BorderRadius.circular(8),
+              fieldHeight: 50,
+              fieldWidth: 40,
+              activeColor: AppColors.colorWhite,
+              inactiveColor: AppColors.colorGreen,
+              inactiveFillColor: AppColors.colorWhite),
+          keyboardType: TextInputType.number,
+          onChanged: (value) {
+            pinVerificationController.pinCode.value = value;
+            pinVerificationController.pinFilled.value = value.length == 6;
+          },
+        ),
+        Obx(
+          () => Visibility(
+            visible: !pinVerificationController.isProgress.value,
+            replacement: const CircularProgressIndicator(
+              backgroundColor: AppColors.colorGreen,
+            ),
+            child: ElevatedButton(
+              onPressed: pinVerificationController.pinFilled.value
+                  ? () => pinVerificationController.pinVerification()
+                  : null,
+              child: const Text(
+                "Verify",
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -133,7 +114,7 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
               text: 'Sign In',
               style: const TextStyle(color: AppColors.colorGreen),
               recognizer: TapGestureRecognizer()
-                ..onTap = () => onTapPinVerificationSignInAction(context)),
+                ..onTap = () => pinVerificationController.goToSignIn()),
         ],
       ),
     );

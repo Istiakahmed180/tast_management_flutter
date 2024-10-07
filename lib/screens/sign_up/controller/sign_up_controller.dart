@@ -6,6 +6,9 @@ import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/network/network_response.dart';
 import 'package:task_management/network/network_service.dart';
 
+// -------------------------------------------------------------------------- //
+// Sign Up Controller
+// -------------------------------------------------------------------------- //
 class SignUpController extends GetxController {
   final RxBool isProgress = false.obs;
   final TextEditingController emailController = TextEditingController();
@@ -24,6 +27,8 @@ class SignUpController extends GetxController {
     passwordController.dispose();
   }
 
+  // ------------------------------------------------------------------------ //
+  // Sign Up Function Start
   Future<void> signUp({required GlobalKey<FormState> formKey}) async {
     if (formKey.currentState!.validate()) {
       isProgress.value = true;
@@ -61,6 +66,11 @@ class SignUpController extends GetxController {
     }
   }
 
+  // Sign Up Function End
+  // ------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------ //
+  // Clear Text Fields Function Start
   void clearTextFields() {
     emailController.clear();
     firstNameController.clear();
@@ -69,7 +79,14 @@ class SignUpController extends GetxController {
     passwordController.clear();
   }
 
+  // Clear Text Fields Function End
+  // ------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------ //
+  // Gog To Sign In Function Start
   void goToSignIn() {
     Get.back();
   }
+// Gog To Sign In Function End
+// -------------------------------------------------------------------------- //
 }

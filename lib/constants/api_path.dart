@@ -5,4 +5,6 @@ class ApiPath {
   // Authentication API Path
   static const String registration = "$_baseUrl/Registration";
   static const String login = "$_baseUrl/Login";
+  static const String emailAddressVerify = "$_baseUrl/RecoverVerifyEmail";
+  static const String pinCodeVerify = "$_baseUrl/RecoverVerifyOTP";
 }

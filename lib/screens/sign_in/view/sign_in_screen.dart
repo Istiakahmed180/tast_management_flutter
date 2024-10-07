@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management/common/widgets/app_background.dart';
+import 'package:task_management/common/widgets/exit_confirmation_alert_dialog.dart';
 import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/screens/sign_in/controller/sign_in_controller.dart';
 
@@ -20,37 +21,42 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
-    return AppBackground(
-      child: SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 150),
-              Text(
-                "Get Started With",
-                style: textTheme.displaySmall,
-              ),
-              const SizedBox(height: 24),
-              _buildSignInForm(context),
-              const SizedBox(height: 40),
-              Center(
-                child: Column(
-                  children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                    _buildSignUpSection(context),
-                  ],
+    return WillPopScope(
+      onWillPop: () {
+        return _showExitConfirmationAlertDialog(context);
+      },
+      child: AppBackground(
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 150),
+                Text(
+                  "Get Started With",
+                  style: textTheme.displaySmall,
                 ),
-              )
-            ],
+                const SizedBox(height: 24),
+                _buildSignInForm(context),
+                const SizedBox(height: 40),
+                Center(
+                  child: Column(
+                    children: [
+                      TextButton(
+                        onPressed: () => signInController.goToForgotPassword(),
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      _buildSignUpSection(context),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -122,5 +128,12 @@ class _SignInScreenState extends State<SignInScreen> {
         ],
       ),
     );
+  }
+
+  Future<bool> _showExitConfirmationAlertDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) => const ExitConfirmationAlertDialog(),
+    ).then((value) => value ?? false);
   }
 }

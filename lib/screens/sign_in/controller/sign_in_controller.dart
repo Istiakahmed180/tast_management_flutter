@@ -8,6 +8,9 @@ import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/network/network_response.dart';
 import 'package:task_management/network/network_service.dart';
 
+// -------------------------------------------------------------------------- //
+// Sign In Controller
+// -------------------------------------------------------------------------- //
 class SignInController extends GetxController {
   final RxBool isProgress = false.obs;
   final TextEditingController emailController = TextEditingController();
@@ -20,6 +23,8 @@ class SignInController extends GetxController {
     passwordController.dispose();
   }
 
+  // ------------------------------------------------------------------------ //
+  // Sign In Function Start
   Future<void> signIn({required GlobalKey<FormState> formKey}) async {
     if (formKey.currentState!.validate()) {
       isProgress.value = true;
@@ -57,15 +62,39 @@ class SignInController extends GetxController {
     }
   }
 
+  // Sign In Function End
+  // ------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------ //
+  // Go To Sign Up Function Start
   void goToSignUp() {
     Get.toNamed(Routes.signUp);
   }
 
+  // Go To Sign Up Function End
+  // ------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------ //
+  // Go To Forgot Password Function Start
+  void goToForgotPassword() {
+    Get.toNamed(Routes.emailAddress);
+  }
+
+  // Go To Forgot Password Function End
+  // ------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------ //
+  // Clear Text Field Function Start
   void clearTextFields() {
     emailController.clear();
     passwordController.clear();
   }
 
+  // Clear Text Field Function End
+  // ------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------ //
+  // Log Out Function Start
   Future<void> logOut() async {
     Fluttertoast.showToast(
         msg: "Logout Success", backgroundColor: AppColors.colorGreen);
@@ -73,4 +102,6 @@ class SignInController extends GetxController {
     await prefs.clear();
     Get.offAllNamed(Routes.signIn);
   }
+// Log Out Function End
+// -------------------------------------------------------------------------- //
 }

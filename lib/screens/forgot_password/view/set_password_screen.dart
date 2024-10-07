@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_management/common/widgets/app_background.dart';
 import 'package:task_management/constants/app_colors.dart';
-import 'package:task_management/screens/forgot_password/controller/forgot_password_controller.dart';
 
 class SetPasswordScreen extends StatelessWidget {
   const SetPasswordScreen({super.key});
@@ -63,7 +62,7 @@ class SetPasswordScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => onTapSetPasswordConfirmAction(context),
+            onPressed: () {},
             child: const Text("Confirm"),
           ),
         ],
@@ -84,8 +83,7 @@ class SetPasswordScreen extends StatelessWidget {
           TextSpan(
               text: 'Sign In',
               style: const TextStyle(color: AppColors.colorGreen),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => onTapSetPasswordSignInAction(context)),
+              recognizer: TapGestureRecognizer()..onTap = () {}),
         ],
       ),
     );
