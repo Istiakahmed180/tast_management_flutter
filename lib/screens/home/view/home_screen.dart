@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_management/common/widgets/exit_confirmation_alert_dialog.dart';
 import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/constants/assets_path.dart';
 import 'package:task_management/screens/canceled/view/canceled_screen.dart';
@@ -30,11 +31,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppBar(textTheme),
-        bottomNavigationBar: _buildNavigationBar(),
-        body: pages[currentIndex],
+    return WillPopScope(
+      onWillPop: () {
+        return _showExitConfirmationAlertDialog(context);
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: _buildAppBar(textTheme),
+          bottomNavigationBar: _buildNavigationBar(),
+          body: pages[currentIndex],
+        ),
       ),
     );
   }
@@ -94,5 +100,12 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       ],
     );
+  }
+
+  Future<bool> _showExitConfirmationAlertDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) => const ExitConfirmationAlertDialog(),
+    ).then((value) => value ?? false);
   }
 }
