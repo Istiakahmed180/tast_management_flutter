@@ -78,7 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         subtitle: Text(
           "Istiakahmed180@gmail.com",
-          style: textTheme.titleSmall?.copyWith(color: AppColors.colorWhite),
+          style: textTheme.titleSmall
+              ?.copyWith(color: AppColors.colorWhite, fontSize: 14),
         ),
         leading: const CircleAvatar(
           radius: 25,

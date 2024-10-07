@@ -70,7 +70,8 @@ class _SignInScreenState extends State<SignInScreen> {
           TextSpan(
               text: 'Sign Up',
               style: const TextStyle(color: AppColors.colorGreen),
-              recognizer: TapGestureRecognizer()..onTap = () {}),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () => signInController.goToSignUp()),
         ],
       ),
     );
@@ -110,7 +111,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 backgroundColor: AppColors.colorGreen,
               ),
               child: ElevatedButton(
-                onPressed: () => signInController.signIn(),
+                onPressed: () => signInController.signIn(formKey: formKey),
                 child: const Icon(
                   Icons.arrow_circle_right_outlined,
                   size: 30,

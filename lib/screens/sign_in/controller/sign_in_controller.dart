@@ -13,35 +13,52 @@ class SignInController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  Future<void> signIn() async {
-    isProgress.value = true;
-    final Map<String, dynamic> requestBody = {
-      "email": emailController.text.trim(),
-      "password": passwordController.text
-    };
-    final NetworkResponse response = await NetworkService.postRequest(
-        url: ApiPath.login, requestBody: requestBody);
-    isProgress.value = false;
-    if (response.isSuccess) {
-      if (response.requestResponse["status"] == "success") {
-        final token = response.requestResponse["token"];
-        if (token != null) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString("token", token);
+  @override
+  void onClose() {
+    super.onClose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  Future<void> signIn({required GlobalKey<FormState> formKey}) async {
+    if (formKey.currentState!.validate()) {
+      isProgress.value = true;
+      final Map<String, dynamic> requestBody = {
+        "email": emailController.text.trim(),
+        "password": passwordController.text
+      };
+      final NetworkResponse response = await NetworkService.postRequest(
+          url: ApiPath.login, requestBody: requestBody);
+      isProgress.value = false;
+      if (response.isSuccess) {
+        if (response.requestResponse["status"] == "success") {
+          final token = response.requestResponse["token"];
+          if (token != null) {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString("token", token);
+          }
+          Fluttertoast.showToast(
+              msg: "Login Success", backgroundColor: AppColors.colorGreen);
+          Get.offAllNamed(Routes.home);
+          clearTextFields();
+        } else if (response.requestResponse["status"] == "fail") {
+          Fluttertoast.showToast(
+              msg: response.requestResponse["data"],
+              backgroundColor: AppColors.colorRed);
         }
+      } else {
         Fluttertoast.showToast(
-            msg: "Login Success", backgroundColor: AppColors.colorGreen);
-        Get.offAllNamed(Routes.home);
-        clearTextFields();
-      } else if (response.requestResponse["status"] == "fail") {
-        Fluttertoast.showToast(
-            msg: response.requestResponse["data"],
-            backgroundColor: AppColors.colorRed);
+            msg: response.errorMessage, backgroundColor: AppColors.colorRed);
       }
     } else {
       Fluttertoast.showToast(
-          msg: response.errorMessage, backgroundColor: AppColors.colorRed);
+          msg: "Please fill up all required field",
+          backgroundColor: AppColors.colorOrange);
     }
+  }
+
+  void goToSignUp() {
+    Get.toNamed(Routes.signUp);
   }
 
   void clearTextFields() {

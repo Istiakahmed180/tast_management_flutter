@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_management/common/widgets/app_background.dart';
 import 'package:task_management/constants/app_colors.dart';
+import 'package:task_management/screens/sign_up/controller/sign_up_controller.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,6 +14,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
+  final SignUpController signUpController = Get.put(SignUpController());
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +74,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           TextSpan(
               text: 'Sign In',
               style: const TextStyle(color: AppColors.colorGreen),
-              recognizer: TapGestureRecognizer()..onTap = () {}),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () => signUpController.goToSignIn()),
         ],
       ),
     );
@@ -85,6 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
         children: [
           TextFormField(
+            controller: signUpController.emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(hintText: "Email"),
             validator: (value) {
@@ -96,6 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           const SizedBox(height: 20),
           TextFormField(
+            controller: signUpController.firstNameController,
             keyboardType: TextInputType.text,
             decoration: const InputDecoration(hintText: "First Name"),
             validator: (value) {
@@ -107,6 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           const SizedBox(height: 20),
           TextFormField(
+            controller: signUpController.lastNameController,
             keyboardType: TextInputType.text,
             decoration: const InputDecoration(hintText: "Last Name"),
             validator: (value) {
@@ -118,6 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           const SizedBox(height: 20),
           TextFormField(
+            controller: signUpController.mobileController,
             keyboardType: TextInputType.phone,
             decoration: const InputDecoration(hintText: "Mobile"),
             validator: (value) {
@@ -129,6 +137,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           const SizedBox(height: 20),
           TextFormField(
+            controller: signUpController.passwordController,
             obscureText: true,
             decoration: const InputDecoration(hintText: "Password"),
             validator: (value) {
@@ -139,13 +148,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
             },
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {}
-            },
-            child: const Icon(
-              Icons.arrow_circle_right_outlined,
-              size: 30,
+          Obx(
+            () => Visibility(
+              visible: !signUpController.isProgress.value,
+              replacement: const CircularProgressIndicator(
+                backgroundColor: AppColors.colorGreen,
+              ),
+              child: ElevatedButton(
+                onPressed: () => signUpController.signUp(formKey: formKey),
+                child: const Icon(
+                  Icons.arrow_circle_right_outlined,
+                  size: 30,
+                ),
+              ),
             ),
           ),
         ],
