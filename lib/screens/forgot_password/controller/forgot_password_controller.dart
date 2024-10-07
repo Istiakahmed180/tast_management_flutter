@@ -132,13 +132,27 @@ class ForgotPasswordSetPasswordController extends GetxController {
         isProgress.value = true;
         final Map<String, dynamic> requestBody = {
           "email": emailAddressController.emailController.text,
-          "OTP": pinVerificationController.pinCode,
+          "OTP": pinVerificationController.pinCode.toString(),
           "password": passwordController.text
         };
         final NetworkResponse response = await NetworkService.postRequest(
             url: ApiPath.setPassword, requestBody: requestBody);
         isProgress.value = false;
         if (response.isSuccess) {
+          if (response.requestResponse["status"] == "success") {
+            Get.offNamed(Routes.signIn);
+            passwordController.clear();
+            confirmPasswordController.clear();
+            emailAddressController.emailController.clear();
+            pinVerificationController.pinCode.value = "";
+            Fluttertoast.showToast(
+                msg: response.requestResponse["data"],
+                backgroundColor: AppColors.colorGreen);
+          } else {
+            Fluttertoast.showToast(
+                msg: response.requestResponse["data"],
+                backgroundColor: AppColors.colorRed);
+          }
         } else {
           Fluttertoast.showToast(
               msg: response.errorMessage, backgroundColor: AppColors.colorRed);
