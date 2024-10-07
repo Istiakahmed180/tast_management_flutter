@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:task_management/common/logic/auth_controller.dart';
 import 'package:task_management/config/routes/routes.dart';
 import 'package:task_management/constants/api_path.dart';
 import 'package:task_management/constants/app_colors.dart';
@@ -12,6 +12,7 @@ import 'package:task_management/network/network_service.dart';
 // Sign In Controller
 // -------------------------------------------------------------------------- //
 class SignInController extends GetxController {
+  final AuthController authController = Get.put(AuthController());
   final RxBool isProgress = false.obs;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -38,10 +39,7 @@ class SignInController extends GetxController {
       if (response.isSuccess) {
         if (response.requestResponse["status"] == "success") {
           final token = response.requestResponse["token"];
-          if (token != null) {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setString("token", token);
-          }
+          authController.saveToken(token);
           Fluttertoast.showToast(
               msg: "Login Success", backgroundColor: AppColors.colorGreen);
           Get.offAllNamed(Routes.home);
@@ -92,16 +90,4 @@ class SignInController extends GetxController {
 
   // Clear Text Field Function End
   // ------------------------------------------------------------------------ //
-
-  // ------------------------------------------------------------------------ //
-  // Log Out Function Start
-  Future<void> logOut() async {
-    Fluttertoast.showToast(
-        msg: "Logout Success", backgroundColor: AppColors.colorGreen);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Get.offAllNamed(Routes.signIn);
-  }
-// Log Out Function End
-// -------------------------------------------------------------------------- //
 }
