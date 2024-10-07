@@ -86,7 +86,6 @@ class ForgotPasswordPinVerificationController extends GetxController {
     if (response.isSuccess) {
       if (response.requestResponse["status"] == "success") {
         Get.offNamed(Routes.setPassword);
-        forgotPasswordEmailAddressController.emailController.clear();
         Fluttertoast.showToast(
             msg: response.requestResponse["data"],
             backgroundColor: AppColors.colorGreen);
@@ -101,6 +100,60 @@ class ForgotPasswordPinVerificationController extends GetxController {
     }
   }
   // Pin Verification Function End
+  // ------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------ //
+  // Gp Tp Sign In Function Start
+  void goToSignIn() {
+    Get.offNamed(Routes.signIn);
+  }
+  // Gp Tp Sign In Function End
+  // ------------------------------------------------------------------------ //
+}
+
+// -------------------------------------------------------------------------- //
+// Forgot Password Set Password Controller
+// -------------------------------------------------------------------------- //
+class ForgotPasswordSetPasswordController extends GetxController {
+  final ForgotPasswordEmailAddressController emailAddressController =
+      Get.put(ForgotPasswordEmailAddressController());
+  final ForgotPasswordPinVerificationController pinVerificationController =
+      Get.put(ForgotPasswordPinVerificationController());
+  final RxBool isProgress = false.obs;
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  // ------------------------------------------------------------------------ //
+  // Set Password Function Start
+  Future<void> setPassword({required GlobalKey<FormState> formKey}) async {
+    if (formKey.currentState!.validate()) {
+      if (passwordController.text == confirmPasswordController.text) {
+        isProgress.value = true;
+        final Map<String, dynamic> requestBody = {
+          "email": emailAddressController.emailController.text,
+          "OTP": pinVerificationController.pinCode,
+          "password": passwordController.text
+        };
+        final NetworkResponse response = await NetworkService.postRequest(
+            url: ApiPath.setPassword, requestBody: requestBody);
+        isProgress.value = false;
+        if (response.isSuccess) {
+        } else {
+          Fluttertoast.showToast(
+              msg: response.errorMessage, backgroundColor: AppColors.colorRed);
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: "Password not match", backgroundColor: AppColors.colorOrange);
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: "Please fill up all required fields",
+          backgroundColor: AppColors.colorOrange);
+    }
+  }
+  // Set Password Function End
   // ------------------------------------------------------------------------ //
 
   // ------------------------------------------------------------------------ //

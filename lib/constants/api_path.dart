@@ -7,4 +7,5 @@ class ApiPath {
   static const String login = "$_baseUrl/Login";
   static const String emailAddressVerify = "$_baseUrl/RecoverVerifyEmail";
   static const String pinCodeVerify = "$_baseUrl/RecoverVerifyOTP";
+  static const String setPassword = "$_baseUrl/RecoverResetPass";
 }
