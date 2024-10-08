@@ -37,4 +37,31 @@ class ListTaskByStatusController extends GetxController {
   }
   // Get List Task By Status Function End
   // ------------------------------------------------------------------------ //
+
+// ------------------------------------------------------------------------ //
+  // Delete Task By ID Function Start
+  Future<void> deleteTaskByID(
+      {required String taskId, required String status}) async {
+    isProgress.value = true;
+    final url = "${ApiPath.deleteTask}/$taskId";
+    final NetworkResponse response = await NetworkService.getRequest(url: url);
+    isProgress.value = false;
+    if (response.isSuccess) {
+      if (response.requestResponse["status"] == "success") {
+        taskList.clear();
+        getTaskByStatus(status: status);
+        Fluttertoast.showToast(
+            msg: "Task Delete Complete", backgroundColor: AppColors.colorGreen);
+      } else {
+        Fluttertoast.showToast(
+            msg: response.requestResponse["data"],
+            backgroundColor: AppColors.colorRed);
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: response.errorMessage, backgroundColor: AppColors.colorRed);
+    }
+  }
+// Delete Task By ID Function End
+// ------------------------------------------------------------------------ //
 }

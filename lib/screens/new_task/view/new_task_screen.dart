@@ -57,97 +57,109 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
 
   Expanded _buildTaskListSection(TextTheme textTheme) {
     return Expanded(
-      child: ListView.separated(
-          itemBuilder: (context, index) {
-            return const SizedBox(
-              height: 5,
-            );
-          },
-          separatorBuilder: (context, index) {
-            final task = listTaskByStatusController.taskList[index];
-            final DateTime dateTime = DateTime.parse(task["createdDate"]);
-            final String formattedDate =
-                DateFormat("dd-MMM-yyyy").format(dateTime);
-            return Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-              color: AppColors.colorWhite,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${task["title"].isNotEmpty ? task["title"] : "N/A"}",
-                      style: textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "${task["description"].isNotEmpty ? task["description"] : "N/A"}",
-                      style: textTheme.titleSmall?.copyWith(
-                          color: AppColors.colorLightGray,
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "Date : $formattedDate",
-                      style: textTheme.titleSmall?.copyWith(
-                          color: AppColors.colorDarkBlue,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: listTaskByStatusController.taskList.isEmpty
+          ? Center(
+              child: Text(
+                "Data Not Found",
+                style: textTheme.titleMedium!.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.colorLightGray),
+              ),
+            )
+          : ListView.separated(
+              itemBuilder: (context, index) {
+                final task = listTaskByStatusController.taskList[index];
+                final DateTime dateTime = DateTime.parse(task["createdDate"]);
+                final String formattedDate =
+                    DateFormat("dd-MMM-yyyy").format(dateTime);
+                return Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  color: AppColors.colorWhite,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: 100,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.colorBlue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              visualDensity: VisualDensity.compact,
-                            ),
-                            onPressed: () {},
-                            child: Text(
-                              "${task["status"].isNotEmpty ? task["status"] : "N/A"}",
-                            ),
-                          ),
+                        Text(
+                          "${task["title"].isNotEmpty ? task["title"] : "N/A"}",
+                          style: textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "${task["description"].isNotEmpty ? task["description"] : "N/A"}",
+                          style: textTheme.titleSmall?.copyWith(
+                              color: AppColors.colorLightGray,
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          "Date : $formattedDate",
+                          style: textTheme.titleSmall?.copyWith(
+                              color: AppColors.colorDarkBlue,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          height: 5,
                         ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            IconButton(
+                            SizedBox(
+                              width: 100,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.colorBlue,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  visualDensity: VisualDensity.compact,
+                                ),
                                 onPressed: () {},
-                                icon: const Icon(
-                                  Icons.edit_off_outlined,
-                                  color: AppColors.colorGreen,
-                                )),
-                            IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.delete_forever_sharp,
-                                  color: AppColors.colorRed,
-                                ))
+                                child: Text(
+                                  "${task["status"].isNotEmpty ? task["status"] : "N/A"}",
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.edit_off_outlined,
+                                      color: AppColors.colorGreen,
+                                    )),
+                                IconButton(
+                                    onPressed: () => listTaskByStatusController
+                                        .deleteTaskByID(
+                                            taskId: task["_id"].toString(),
+                                            status: "New"),
+                                    icon: const Icon(
+                                      Icons.delete_forever_sharp,
+                                      color: AppColors.colorRed,
+                                    ))
+                              ],
+                            )
                           ],
                         )
                       ],
-                    )
-                  ],
-                ),
-              ),
-            );
-          },
-          itemCount: listTaskByStatusController.taskList.length),
+                    ),
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  height: 10,
+                );
+              },
+              itemCount: listTaskByStatusController.taskList.length),
     );
   }
 

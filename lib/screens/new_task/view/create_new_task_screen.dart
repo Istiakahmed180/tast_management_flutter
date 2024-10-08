@@ -25,34 +25,25 @@ class _CreateNewTaskScreenState extends State<CreateNewTaskScreen> {
       resizeToAvoidBottomInset: false,
       appBar: const CommonAppBar(),
       body: AppBackground(
-        child: Obx(
-          () => createNewTaskController.isProgress.value
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: AppColors.colorGreen,
-                  ),
-                )
-              : SingleChildScrollView(
-                  reverse: true,
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 100),
-                      Text(
-                        "Add New Task",
-                        style: textTheme.titleLarge!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 24),
-                      _buildNewTaskForm(
-                          context, createNewTaskController, formKey),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).viewInsets.bottom))
-                    ],
-                  ),
-                ),
+        child: SingleChildScrollView(
+          reverse: true,
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 100),
+              Text(
+                "Add New Task",
+                style:
+                    textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 24),
+              _buildNewTaskForm(context, createNewTaskController, formKey),
+              Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom))
+            ],
+          ),
         ),
       ),
     );
@@ -102,8 +93,8 @@ class _CreateNewTaskScreenState extends State<CreateNewTaskScreen> {
                 backgroundColor: AppColors.colorGreen,
               ),
               child: ElevatedButton(
-                onPressed: () =>
-                    createNewTaskController.createNewTask(formKey: formKey),
+                onPressed: () => createNewTaskController.createNewTask(
+                    formKey: formKey, status: "New"),
                 child: const Icon(
                   Icons.arrow_circle_right_outlined,
                   size: 30,
