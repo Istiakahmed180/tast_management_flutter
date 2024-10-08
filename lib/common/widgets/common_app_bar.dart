@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management/common/logic/auth_controller.dart';
 import 'package:task_management/common/logic/user_details_controller.dart';
+import 'package:task_management/common/widgets/exit_confirmation_alert_dialog.dart';
 import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/constants/assets_path.dart';
 
@@ -60,10 +61,25 @@ class _CommonAppBarState extends State<CommonAppBar> {
       }),
       actions: [
         IconButton(
-          onPressed: () => authController.logout(),
+          onPressed: () {
+            _showExitConfirmationAlertDialog(context);
+          },
           icon: const Icon(Icons.logout_outlined),
         ),
       ],
     );
+  }
+
+  Future<bool> _showExitConfirmationAlertDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) => ExitConfirmationAlertDialog(
+        title: "Logout Application?",
+        content: "Are you sure you want to logout of the application?",
+        actionYes: () {
+          authController.logout();
+        },
+      ),
+    ).then((value) => value ?? false);
   }
 }

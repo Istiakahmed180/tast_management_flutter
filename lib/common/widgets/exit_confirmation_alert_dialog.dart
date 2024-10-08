@@ -8,6 +8,7 @@ class ExitConfirmationAlertDialog extends StatelessWidget {
   final String content;
   final String cancelText;
   final String confirmText;
+  final void Function()? actionYes;
 
   const ExitConfirmationAlertDialog({
     super.key,
@@ -15,6 +16,7 @@ class ExitConfirmationAlertDialog extends StatelessWidget {
     this.content = 'Are you sure you want to exit the application?',
     this.cancelText = 'No',
     this.confirmText = 'Yes',
+    this.actionYes,
   });
 
   @override
@@ -37,7 +39,13 @@ class ExitConfirmationAlertDialog extends StatelessWidget {
           ),
         ),
         TextButton(
-          onPressed: () => SystemNavigator.pop(),
+          onPressed: () {
+            if (actionYes != null) {
+              actionYes!();
+            } else {
+              SystemNavigator.pop();
+            }
+          },
           child: Text(
             confirmText,
             style: const TextStyle(color: AppColors.colorGreen),
