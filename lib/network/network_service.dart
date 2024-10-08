@@ -32,13 +32,22 @@ class NetworkService {
     return headers;
   }
 
+  // Create Headers Token
+  static Map<String, String> _createHeadersToken(String? token) {
+    final headers = <String, String>{};
+    if (token != null) {
+      headers['token'] = token;
+    }
+    return headers;
+  }
+
   // Get API Network Service
   static Future<NetworkResponse> getRequest({required String url}) async {
     final String? token = await _getToken();
     try {
       Uri uri = Uri.parse(url);
       final response = await get(uri,
-              headers: _createHeaders(token)) // token handled as nullable
+              headers: _createHeadersToken(token)) // token handled as nullable
           .timeout(timeoutDuration);
       return _handleResponse(url, response, token);
     } catch (e) {

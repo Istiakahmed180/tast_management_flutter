@@ -1,44 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management/common/logic/auth_controller.dart';
+import 'package:task_management/common/logic/user_details_controller.dart';
 import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/constants/assets_path.dart';
 
-class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CommonAppBar({super.key});
 
   @override
+  State<CommonAppBar> createState() => _CommonAppBarState();
+
+  @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 20);
+}
+
+class _CommonAppBarState extends State<CommonAppBar> {
+  final UserDetailsController userDetailsController =
+      Get.put(UserDetailsController());
+  final AuthController authController = Get.find<AuthController>();
+
+  @override
+  void initState() {
+    super.initState();
+    userDetailsController.getUserDetails();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AuthController authController = Get.put(AuthController());
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: AppColors.colorGreen,
-      title: ListTile(
-        title: Text(
-          "Istiak Ahmed",
-          style: textTheme.titleLarge?.copyWith(color: AppColors.colorWhite),
-        ),
-        subtitle: Text(
-          "Istiakahmed180@gmail.com",
-          style: textTheme.titleSmall
-              ?.copyWith(color: AppColors.colorWhite, fontSize: 14),
-        ),
-        leading: const CircleAvatar(
-          radius: 25,
-          backgroundColor: AppColors.colorGreen,
-          backgroundImage: AssetImage(AssetsPath.avater),
-        ),
-      ),
+      title: Obx(() {
+        final userName =
+            "${userDetailsController.userData["firstName"] ?? "Guest"} ${userDetailsController.userData["lastName"] ?? ""}";
+        final userEmail =
+            userDetailsController.userData["email"] ?? "No email available";
+
+        return ListTile(
+          title: Text(
+            userName,
+            style: textTheme.titleLarge?.copyWith(color: AppColors.colorWhite),
+          ),
+          subtitle: Text(
+            userEmail,
+            style: textTheme.titleSmall?.copyWith(
+              color: AppColors.colorWhite,
+              fontSize: 14,
+            ),
+          ),
+          leading: const CircleAvatar(
+            radius: 25,
+            backgroundColor: AppColors.colorGreen,
+            backgroundImage: AssetImage(AssetsPath.avater),
+          ),
+        );
+      }),
       actions: [
         IconButton(
           onPressed: () => authController.logout(),
           icon: const Icon(Icons.logout_outlined),
-        )
+        ),
       ],
     );
   }
