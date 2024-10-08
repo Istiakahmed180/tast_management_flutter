@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_management/common/logic/auth_controller.dart';
 import 'package:task_management/common/logic/user_details_controller.dart';
 import 'package:task_management/common/widgets/exit_confirmation_alert_dialog.dart';
+import 'package:task_management/config/routes/routes.dart';
 import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/constants/assets_path.dart';
 
@@ -52,10 +53,14 @@ class _CommonAppBarState extends State<CommonAppBar> {
               fontSize: 14,
             ),
           ),
-          leading: const CircleAvatar(
-            radius: 25,
-            backgroundColor: AppColors.colorGreen,
-            backgroundImage: AssetImage(AssetsPath.avater),
+          leading: InkWell(
+            borderRadius: BorderRadius.circular(50),
+            onTap: () => Get.toNamed(Routes.updateProfile),
+            child: const CircleAvatar(
+              radius: 25,
+              backgroundColor: AppColors.colorGreen,
+              backgroundImage: AssetImage(AssetsPath.avater),
+            ),
           ),
         );
       }),

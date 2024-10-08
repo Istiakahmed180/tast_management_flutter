@@ -12,5 +12,6 @@ Map<String, WidgetBuilder> routesHandler() {
     Routes.setPassword: (context) => RoutesConfig.setPasswordScreen,
     Routes.home: (context) => RoutesConfig.homeScreen,
     Routes.createNewTask: (context) => RoutesConfig.createNewTask,
+    Routes.updateProfile: (context) => RoutesConfig.updateProfile,
   };
 }
