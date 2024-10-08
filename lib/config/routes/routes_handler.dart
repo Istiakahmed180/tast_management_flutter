@@ -11,5 +11,6 @@ Map<String, WidgetBuilder> routesHandler() {
     Routes.pinVerification: (context) => RoutesConfig.pinVerificationScreen,
     Routes.setPassword: (context) => RoutesConfig.setPasswordScreen,
     Routes.home: (context) => RoutesConfig.homeScreen,
+    Routes.createNewTask: (context) => RoutesConfig.createNewTask,
   };
 }

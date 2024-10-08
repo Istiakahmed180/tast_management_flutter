@@ -6,4 +6,5 @@ class Routes {
   static const String pinVerification = "/pin_verification_screen";
   static const String setPassword = "/set_password_screen";
   static const String home = "/home_screen";
+  static const String createNewTask = "/create_new_task_screen";
 }

@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_management/common/widgets/app_background.dart';
 import 'package:task_management/constants/app_colors.dart';
+import 'package:task_management/screens/new_task/controller/new_task_controller.dart';
 
 class NewTaskScreen extends StatelessWidget {
   const NewTaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final NewTaskController newTaskController = Get.put(NewTaskController());
     TextTheme textTheme = Theme.of(context).textTheme;
 
-    return AppBackground(
-        child: Padding(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        children: [
-          _buildProgressHeaderSection(textTheme),
-          const SizedBox(
-            height: 10,
-          ),
-          _buildTaskListSection(textTheme)
-        ],
-      ),
-    ));
+    return Scaffold(
+      body: AppBackground(
+          child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            _buildProgressHeaderSection(textTheme),
+            const SizedBox(
+              height: 10,
+            ),
+            _buildTaskListSection(textTheme)
+          ],
+        ),
+      )),
+      floatingActionButton:
+          buildCreateNewTaskFlotButton(newTaskController: newTaskController),
+    );
   }
 
   Expanded _buildTaskListSection(TextTheme textTheme) {
@@ -177,6 +184,28 @@ class NewTaskScreen extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class buildCreateNewTaskFlotButton extends StatelessWidget {
+  const buildCreateNewTaskFlotButton({
+    super.key,
+    required this.newTaskController,
+  });
+
+  final NewTaskController newTaskController;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      onPressed: () => newTaskController.goToCreateNewTask(),
+      backgroundColor: AppColors.colorGreen,
+      child: const Icon(
+        Icons.add,
+        color: AppColors.colorWhite,
       ),
     );
   }
