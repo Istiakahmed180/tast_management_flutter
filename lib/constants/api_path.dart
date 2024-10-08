@@ -11,4 +11,7 @@ class ApiPath {
 
   // User Profile API Path
   static const String userProfile = "$_baseUrl/ProfileDetails";
+
+  // Task API Path
+  static const String createNewTask = "$_baseUrl/createTask";
 }

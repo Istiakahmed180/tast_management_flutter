@@ -17,8 +17,8 @@ class NetworkService {
     return prefs.getString("token");
   }
 
-  // Create Headers
-  static Map<String, String> _createHeaders(String? token) {
+  // Post Request Headers
+  static Map<String, String> _postRequestHeaders(String? token) {
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -26,14 +26,14 @@ class NetworkService {
 
     // Add Authorization header only if token is not null
     if (token != null) {
-      headers['Authorization'] = 'Bearer $token';
+      headers['token'] = token;
     }
 
     return headers;
   }
 
-  // Create Headers Token
-  static Map<String, String> _createHeadersToken(String? token) {
+  // Get Request Headers
+  static Map<String, String> _getRequestHeaders(String? token) {
     final headers = <String, String>{};
     if (token != null) {
       headers['token'] = token;
@@ -47,7 +47,7 @@ class NetworkService {
     try {
       Uri uri = Uri.parse(url);
       final response = await get(uri,
-              headers: _createHeadersToken(token)) // token handled as nullable
+              headers: _getRequestHeaders(token)) // token handled as nullable
           .timeout(timeoutDuration);
       return _handleResponse(url, response, token);
     } catch (e) {
@@ -69,7 +69,7 @@ class NetworkService {
 
       final response = await post(
         uri,
-        headers: _createHeaders(token), // token handled as nullable
+        headers: _postRequestHeaders(token), // token handled as nullable
         body: jsonEncode(requestBody),
       ).timeout(timeoutDuration);
       return _handleResponse(url, response, token);
