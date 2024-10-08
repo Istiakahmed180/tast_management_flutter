@@ -1,33 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:task_management/common/logic/list_task_by_status_controller.dart';
 import 'package:task_management/common/widgets/app_background.dart';
 import 'package:task_management/constants/app_colors.dart';
 import 'package:task_management/screens/new_task/controller/new_task_controller.dart';
 
-class NewTaskScreen extends StatelessWidget {
+class NewTaskScreen extends StatefulWidget {
   const NewTaskScreen({super.key});
 
   @override
+  State<NewTaskScreen> createState() => _NewTaskScreenState();
+}
+
+class _NewTaskScreenState extends State<NewTaskScreen> {
+  final NewTaskController newTaskController = Get.put(NewTaskController());
+  final ListTaskByStatusController listTaskByStatusController =
+      Get.put(ListTaskByStatusController());
+
+  @override
+  void initState() {
+    super.initState();
+    listTaskByStatusController.getTaskByStatus(status: "New");
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final NewTaskController newTaskController = Get.put(NewTaskController());
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       body: AppBackground(
-          child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            _buildProgressHeaderSection(textTheme),
-            const SizedBox(
-              height: 10,
-            ),
-            _buildTaskListSection(textTheme)
-          ],
-        ),
+          child: Obx(
+        () => listTaskByStatusController.isProgress.value
+            ? const Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: AppColors.colorGreen,
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    _buildProgressHeaderSection(textTheme),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    _buildTaskListSection(textTheme)
+                  ],
+                ),
+              ),
       )),
       floatingActionButton:
-          buildCreateNewTaskFlotButton(newTaskController: newTaskController),
+          BuildCreateNewTaskFlotButton(newTaskController: newTaskController),
     );
   }
 
@@ -35,6 +59,15 @@ class NewTaskScreen extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
           itemBuilder: (context, index) {
+            return const SizedBox(
+              height: 5,
+            );
+          },
+          separatorBuilder: (context, index) {
+            final task = listTaskByStatusController.taskList[index];
+            final DateTime dateTime = DateTime.parse(task["createdDate"]);
+            final String formattedDate =
+                DateFormat("dd-MMM-yyyy").format(dateTime);
             return Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
@@ -45,7 +78,7 @@ class NewTaskScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Lorem Ipsum is simply dummy",
+                      "${task["title"].isNotEmpty ? task["title"] : "N/A"}",
                       style: textTheme.titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -53,7 +86,7 @@ class NewTaskScreen extends StatelessWidget {
                       height: 10,
                     ),
                     Text(
-                      "It is a long astablashod fact that a reader will be distrapclod by the readeble.",
+                      "${task["description"].isNotEmpty ? task["description"] : "N/A"}",
                       style: textTheme.titleSmall?.copyWith(
                           color: AppColors.colorLightGray,
                           fontSize: 12,
@@ -63,7 +96,7 @@ class NewTaskScreen extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      "Date : 02/02/2024",
+                      "Date : $formattedDate",
                       style: textTheme.titleSmall?.copyWith(
                           color: AppColors.colorDarkBlue,
                           fontSize: 14,
@@ -86,8 +119,8 @@ class NewTaskScreen extends StatelessWidget {
                               visualDensity: VisualDensity.compact,
                             ),
                             onPressed: () {},
-                            child: const Text(
-                              "New",
+                            child: Text(
+                              "${task["status"].isNotEmpty ? task["status"] : "N/A"}",
                             ),
                           ),
                         ),
@@ -114,12 +147,7 @@ class NewTaskScreen extends StatelessWidget {
               ),
             );
           },
-          separatorBuilder: (context, index) {
-            return const SizedBox(
-              height: 10,
-            );
-          },
-          itemCount: 20),
+          itemCount: listTaskByStatusController.taskList.length),
     );
   }
 
@@ -189,8 +217,8 @@ class NewTaskScreen extends StatelessWidget {
   }
 }
 
-class buildCreateNewTaskFlotButton extends StatelessWidget {
-  const buildCreateNewTaskFlotButton({
+class BuildCreateNewTaskFlotButton extends StatelessWidget {
+  const BuildCreateNewTaskFlotButton({
     super.key,
     required this.newTaskController,
   });
