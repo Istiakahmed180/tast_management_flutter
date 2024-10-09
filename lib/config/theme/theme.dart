@@ -67,7 +67,9 @@ class AppTheme {
 
   static OutlineInputBorder _outlineInputBorder() {
     return OutlineInputBorder(
-        borderSide: BorderSide.none, borderRadius: BorderRadius.circular(8));
+        borderSide: BorderSide(
+            color: AppColors.colorLightGray.withOpacity(0.4), width: 0.5),
+        borderRadius: BorderRadius.circular(8));
   }
 
   static TextStyle _displaySmallTextStyle() {
