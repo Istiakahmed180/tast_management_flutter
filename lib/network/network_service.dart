@@ -24,7 +24,6 @@ class NetworkService {
       'Accept': 'application/json',
     };
 
-    // Add Authorization header only if token is not null
     if (token != null) {
       headers['token'] = token;
     }
@@ -46,8 +45,7 @@ class NetworkService {
     final String? token = await _getToken();
     try {
       Uri uri = Uri.parse(url);
-      final response = await get(uri,
-              headers: _getRequestHeaders(token)) // token handled as nullable
+      final response = await get(uri, headers: _getRequestHeaders(token))
           .timeout(timeoutDuration);
       return _handleResponse(url, response, token);
     } catch (e) {
@@ -63,13 +61,10 @@ class NetworkService {
     final String? token = await _getToken();
     try {
       Uri uri = Uri.parse(url);
-
-      // Print the request body for debugging
       debugPrint("Request Body: ${jsonEncode(requestBody)}");
-
       final response = await post(
         uri,
-        headers: _postRequestHeaders(token), // token handled as nullable
+        headers: _postRequestHeaders(token),
         body: jsonEncode(requestBody),
       ).timeout(timeoutDuration);
       return _handleResponse(url, response, token);
@@ -83,20 +78,12 @@ class NetworkService {
       String url, Response response, String? token) {
     printResponse(url, response, token);
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      try {
-        final jsonResponse = jsonDecode(response.body);
-        return NetworkResponse(
-          isSuccess: true,
-          statusCode: response.statusCode,
-          requestResponse: jsonResponse,
-        );
-      } catch (e) {
-        return NetworkResponse(
-          isSuccess: false,
-          statusCode: response.statusCode,
-          errorMessage: "Invalid JSON format: ${e.toString()}",
-        );
-      }
+      final jsonResponse = jsonDecode(response.body);
+      return NetworkResponse(
+        isSuccess: true,
+        statusCode: response.statusCode,
+        requestResponse: jsonResponse,
+      );
     } else {
       return NetworkResponse(
         isSuccess: false,
