@@ -44,13 +44,14 @@ class _CommonAppBarState extends State<CommonAppBar> {
         return ListTile(
           title: Text(
             userName,
-            style: textTheme.titleLarge?.copyWith(color: AppColors.colorWhite),
+            style: textTheme.titleLarge
+                ?.copyWith(color: AppColors.colorWhite, fontSize: 20),
           ),
           subtitle: Text(
             userEmail,
             style: textTheme.titleSmall?.copyWith(
               color: AppColors.colorWhite,
-              fontSize: 14,
+              fontSize: 12,
             ),
           ),
           leading: InkWell(
